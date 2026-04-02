@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Settings | IGEC Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/changepass.css">
+</head>
+
+<body>
+    <%- include('nav', { activePage: 'account'}) %>
+
+<div class="container">
+
+    <a href="/account" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Profile
+    </a>
+
+    <div class="card">
+
+        <% if(changepass){ %>
+
+            <h1>🔒 Security Update</h1>
+            <p class="subtitle">Enter a strong new password to protect your account.</p>
+            
+            <div style="margin-bottom: 15px;">
+                <%- include('errors') %>
+            </div>
+
+            <form action="/changepass" method="POST">
+
+                <label>New Password</label>
+                <div class="input-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" name="password" placeholder="Min. 6 characters" required>
+                </div>
+
+                <label>Confirm Password</label>
+                <div class="input-group">
+                    <i class="fa-solid fa-shield-check"></i>
+                    <input type="password" name="confirmPassword" placeholder="Repeat new password" required>
+                </div>
+
+                <button type="submit">Update Password</button>
+
+            </form>
+
+        <% } else { %>
+
+            <h1>👤 Identity Update</h1>
+            <p class="subtitle">Your username is how other users will identify you.</p>
+
+            <div style="margin-bottom: 15px;">
+                <%- include('errors') %>
+            </div>
+
+            <form action="/changeusername" method="POST">
+
+                <label>New Username</label>
+                <div class="input-group">
+                    <i class="fa-solid fa-user-tag"></i>
+                    <input type="text" name="username" placeholder="Enter cool username" required>
+                </div>
+
+                <button type="submit">Save Username</button>
+
+            </form>
+
+        <% } %>
+
+    </div>
+
+</div>
+
+</body>
+</html>

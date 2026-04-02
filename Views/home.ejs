@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IGEC Shop | Marketplace</title>
+    <meta name="description" content="Exclusive marketplace for Indira Gandhi Engineering College students">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/home.css">
+</head>
+<body>
+ <%- include('nav', { activePage: 'home' }) %>
+
+   <div class="header-section">
+    <picture>
+        <source media="(max-width: 768px)" srcset="/indira gandhi 2.png">
+        <img src="/indira gandhi.png" alt="IGEC Banner">
+    </picture>
+
+    <div class="header-overlay">
+        <h1>IGEC E-Commerce Hub</h1>
+        <p>Exclusive Marketplace for Indira Gandhi Engineering College Students</p>
+    </div>
+</div>
+
+   
+
+    <main>
+        <div class="card-container">
+            <% if (Products && Products.length > 0) { %>
+                <% Products.forEach(product => { %>
+                    <div class="card">
+                        <img src="<%= product.imagepath || '/images/default-product.png' %>" alt="<%= product.productname %>">
+                        <h3><%= product.productname %></h3>
+                        <h4>₹<%= product.price || 0 %></h4>
+                        <a href="/details/<%= product._id %>" class="buy-btn">View Details</a>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p style="grid-column: 1/-1; text-align: center; color: #888;">
+                    No products available yet. Be the first to sell!
+                </p>
+            <% } %>
+        </div>
+    </main>
+
+<%- include('futter') %>
+
+</body>
+</html>

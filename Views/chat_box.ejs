@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - IGEC Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/chat_box.css">
+</head>
+<body>
+
+    <%- include('nav', { activePage: 'chats' }) %>
+
+    <div class="main-container">
+
+        <% if (select) { %>
+            <div class="top-header">
+                <a href="/" class="back-btn">
+                    <i class="fa-solid fa-arrow-left"></i> back
+                </a>
+                <h1 class="page-title">Who do you want to chat with?</h1>
+                <div style="width: 80px;"></div>
+            </div>
+        <% } else { %>
+            <div class="top-header">
+                <a href="/chats" class="back-btn">
+                    <i class="fa-solid fa-arrow-left"></i> back
+                </a>
+                <h1 class="page-title">
+                    <% if (owner) { %>
+                        Buying Inquiries
+                    <% } else { %>
+                        Selling Inquiries
+                    <% } %>
+                </h1>
+                <div style="width: 80px;"></div>
+            </div>
+        <% } %>
+
+        <% if (select) { %>
+
+            <div class="selection-grid">
+                <a href="/client_chats" class="select-card">
+                    <div class="select-icon">
+                        <i class="fa-solid fa-users-viewfinder"></i>
+                    </div>
+                    <h2>My Clients</h2>
+                    <p>People who are interested in buying your uploaded products.</p>
+                </a>
+
+                <a href="/owner_chats" class="select-card">
+                    <div class="select-icon">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                    <h2>Product Owners</h2>
+                    <p>Sellers of the products that you want to buy.</p>
+                </a>
+            </div>
+
+        <% } else { %>
+
+            <div class="chat-list-container">
+
+                <% if (owner) { %>
+
+                    <% if (ownerdata && ownerdata.length > 0) { %>
+                        <% ownerdata.forEach(data => { %>
+                            <a href="/chatting_box/<%= data._id %>" class="chat-item">
+                                <div class="avatar"><%= data.username.charAt(0).toUpperCase() %></div>
+
+                                <div class="chat-info">
+                                    <p class="chat-username"><%= data.username %></p>
+                                </div>
+
+                                <% if (data.unSeenCount > 0) { %>
+                                    <span id="unseen-<%= data._id %>" class="unseen-badge"><%= data.unSeenCount %></span>
+                                <% } else { %>
+                                    <span id="unseen-<%= data._id %>" class="unseen-badge" style="display: none;">0</span>
+                                <% } %>
+
+                                <i class="fa-solid fa-chevron-right chat-action-icon"></i>
+                            </a>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <i class="fa-regular fa-comments"></i>
+                            <h3>No chats found</h3>
+                            <p>You haven't contacted any product owners yet.</p>
+                        </div>
+                    <% } %>
+
+                <% } else { %>
+
+                    <% if (clientdata && clientdata.length > 0) { %>
+                        <% clientdata.forEach(data => { %>
+                            <a href="/chatting_box/<%= data._id %>" class="chat-item">
+                                <div class="avatar"><%= data.username.charAt(0).toUpperCase() %></div>
+
+                                <div class="chat-info">
+                                    <p class="chat-username"><%= data.username %></p>
+                                </div>
+
+                                <% if (data.unSeenCount > 0) { %>
+                                    <span id="unseen-<%= data._id %>" class="unseen-badge"><%= data.unSeenCount %></span>
+                                <% } else { %>
+                                    <span id="unseen-<%= data._id %>" class="unseen-badge" style="display: none;">0</span>
+                                <% } %>
+
+                                <i class="fa-solid fa-chevron-right chat-action-icon"></i>
+                            </a>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="empty-state">
+                            <i class="fa-solid fa-inbox"></i>
+                            <h3>Inbox is empty</h3>
+                            <p>No clients have messaged you regarding your products yet.</p>
+                        </div>
+                    <% } %>
+
+                <% } %>
+
+            </div>
+
+        <% } %>
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on("unseen_messages", (data) => {
+            const { senderId, count } = data;
+
+            const badge = document.getElementById(`unseen-${senderId}`);
+
+            if (badge) {
+                badge.innerText = count;
+
+                if (count > 0) {
+                    badge.style.display = "inline-flex";
+                } else {
+                    badge.style.display = "none";
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

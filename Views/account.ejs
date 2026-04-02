@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Account | IGEC Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/account.css">
+</head>
+<body>
+
+    <%- include('nav', { activePage: 'account' }) %>
+
+ 
+
+    <div class="account-container">
+<a href="/" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back
+    </a>
+
+        <% if(isLoggedIn) { %>
+            
+            <div class="profile-card">
+                <div class="profile-header-bg"></div>
+                <div class="profile-img-wrapper">
+                    <img src="<%= user.profilePic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' %>" alt="Profile">
+                </div>
+                <div class="profile-details">
+                    <h2><%= user.username %></h2>
+                    <p><i class="fa-regular fa-envelope"></i> <%= user.email %></p>
+                </div>
+            </div>
+
+            <div class="menu-container">
+                <a href="/changeusername" class="menu-item">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>Change Name</span>
+                    <i class="fa-solid fa-chevron-right arrow-right"></i>
+                </a>
+
+                <a href="/favourites" class="menu-item">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Your Favourites</span>
+                    <i class="fa-solid fa-chevron-right arrow-right"></i>
+                </a>
+
+                <a href="/yours" class="menu-item">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>My Listed Products</span>
+                    <i class="fa-solid fa-chevron-right arrow-right"></i>
+                </a>
+
+                <a href="/changepass" class="menu-item">
+                    <i class="fa-solid fa-key"></i>
+                    <span>Change Password</span>
+                    <i class="fa-solid fa-chevron-right arrow-right"></i>
+                </a>
+
+                
+                  <a href="/bugs" class="menu-item">
+                <i class="fa-solid fa-box-open"></i>
+                <span>Report Bug</span>
+                <i class="fa-solid fa-chevron-right arrow-right"></i>
+            </a>
+
+
+
+                <form action="/logout" method="POST" class="logout-form">
+                    <button type="submit" class="logout-btn">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </form>
+            </div>
+
+        <% } else { %>
+            
+            <div class="guest-card">
+                <i class="fa-solid fa-circle-user guest-icon"></i>
+                <h1>Welcome to IGEC Shop</h1>
+                <p>Login to manage your listings, view your earnings, and connect with buyers.</p>
+                
+                <a href="/login" class="btn-primary">Login Now</a>
+                <p style="margin: 15px 0 10px; font-size: 0.9rem;">Don't have an account?</p>
+                <a href="/signup" class="btn-outline">Create Account</a>
+                
+                <a href="/" class="back-home">
+                    <i class="fa-solid fa-arrow-left" style="margin-right: 5px;"></i> Back To Home
+                </a>
+            </div>
+
+        <% } %>
+    </div>
+
+
+    <%- include('futter') %>
+</body>
+</html>

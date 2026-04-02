@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Chat with <%= Receiver.username %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/chatting_box.css">
+</head>
+<body>
+
+<div class="message_container">
+    <div class="user-detail">
+        <a href="/chats" style="color: var(--green-dark);"><i class="fa-solid fa-arrow-left"></i></a>
+        <img src="/userprofilepicture" alt="P" class="profile_pic" onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'">
+        <div>
+            <div style="font-weight: bold; color: var(--text-dark);"><%= Receiver.username %></div>
+            <div id="status" class="status">Offline</div>
+        </div>
+    </div>
+
+    <div id="messages" class="messages">
+        <% messages.forEach(message => { %>
+            <div class="message <%= message.Sender.toString() === SenderId.toString() ? 'self' : 'other' %>">
+                <%= message.text %>
+            </div>
+        <% }) %>
+    </div>
+
+    <div class="chat_input_wrapper">
+        <form id="form" class="chat_input">
+            <input id="input" type="text" autocomplete="off" placeholder="Message..." required>
+            <button type="submit" class="send_btn"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const SenderID = "<%= SenderId %>";
+    const ReceiverID = "<%= ReceiverId %>";
+    const messagesBox = document.getElementById("messages");
+    const input = document.getElementById("input");
+
+    // Helper: UI par message dikhana
+    function appendMessage(text, type) {
+        const item = document.createElement('div');
+        item.classList.add('message', type);
+        item.textContent = text;
+        messagesBox.appendChild(item);
+        messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+
+    socket.emit('join_room', { SenderID, ReceiverID });
+
+    document.getElementById("form").addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+
+        // INSTANT FIX: Turant screen par dikhao
+        appendMessage(text, 'self');
+
+        // Server ko bhejo
+        socket.emit('send_messages', { SenderID, ReceiverID, text });
+        
+        input.value = '';
+    });
+
+    socket.on('receive_messages', (data) => {
+        // Sirf tab dikhao agar message kisi aur ne bheja ho
+        // Kyuki apna message humne already 'Instant' dikha diya hai
+        if (data.SenderID !== SenderID) {
+            appendMessage(data.text, 'other');
+        }
+    });
+
+    // Mobile Keyboard Fix: Input par focus hone par scroll top reset
+    input.addEventListener('focus', () => {
+        setTimeout(() => { messagesBox.scrollTop = messagesBox.scrollHeight; }, 300);
+    });
+
+    socket.on('User_Online', () => { 
+        document.getElementById("status").textContent = 'Online';
+        document.getElementById("status").classList.add('online');
+    });
+
+    socket.on('user_offline', () => { 
+        document.getElementById("status").textContent = 'Offline';
+        document.getElementById("status").classList.remove('online');
+    });
+
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Product - IGEC Marketplace</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="sell.css">
+</head>
+<body>
+
+<%- include('nav', { activePage: 'sell' }) %>
+
+    <a href="/" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> Back to Products
+    </a>
+
+    <div class="header-section">
+        <h1>Sell Your Product</h1>
+    </div>
+
+    <form action="/sell" method="POST" enctype="multipart/form-data">
+        
+        <div class="form-group">
+            <label><i class="fa-solid fa-tag"></i> Product Name</label>
+            <input type="text" name="productname" placeholder="E.g. Engineering Graphics Set" required>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fa-solid fa-indian-rupee-sign"></i> Price</label>
+            <input type="number" name="price" placeholder="Enter Price in ₹" required>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fa-solid fa-pen-nib"></i> Description</label>
+            <textarea name="description" rows="3" placeholder="Condition, usage period, etc." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label><i class="fa-solid fa-image"></i> Product Image</label>
+            <input type="file" id="fileInput" name="imagepath" accept="image/*" style="display: none;">
+            
+            <div id="drop-zone">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                Drag & Drop image here or <br><strong>Click to Select</strong>
+            </div>
+        </div>
+
+        <div id="preview-container">
+            <p style="font-weight: 600; color: var(--green-dark);">Preview:</p>
+            <img id="preview" src="" alt="Cropped Preview">
+        </div>
+
+        <br>
+        <button type="submit"><i class="fa-solid fa-check"></i> Submit Product</button>
+    </form>
+
+    <div id="cropper-modal">
+        <div class="modal-content">
+            <h3><i class="fa-solid fa-crop-simple"></i> Adjust Your Image</h3>
+            <div class="image-container">
+                <img id="image-to-crop" src="">
+            </div>
+            <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="btn-cancel" id="cancel-crop">Cancel</button>
+                <button id="apply-crop">Apply & Select</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+ <script>
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('drop-zone');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImg = document.getElementById('preview');
+        
+        const modal = document.getElementById('cropper-modal');
+        const imageToCrop = document.getElementById('image-to-crop');
+        const applyCropBtn = document.getElementById('apply-crop');
+        const cancelCropBtn = document.getElementById('cancel-crop');
+        
+        let cropper;
+
+        // 1. Handle Click on Drop Zone
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // 2. Handle Drag & Drop Events
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // 3. Handle Regular File Selection
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Function to load file into modal
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imageToCrop.src = e.target.result;
+                modal.style.display = 'flex'; // Show modal
+                
+                // Destroy old cropper instance if exists
+                if (cropper) cropper.destroy();
+                
+                // Initialize new Cropper
+                cropper = new Cropper(imageToCrop, {
+                    aspectRatio: 1, // Forces Square shape
+                    viewMode: 1,    // Restricts crop box to within canvas
+                    background: false,
+                    zoomable: true,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // 4. Handle Crop Application
+        applyCropBtn.addEventListener('click', () => {
+            if (!cropper) return;
+
+            // Get cropped canvas
+            const canvas = cropper.getCroppedCanvas({
+                width: 500, // Fixed resolution width
+                height: 500 // Fixed resolution height
+            });
+
+            // Convert canvas to a Blob (File)
+            canvas.toBlob((blob) => {
+                // Show preview in main form
+                const croppedImageUrl = URL.createObjectURL(blob);
+                previewImg.src = croppedImageUrl;
+                previewContainer.style.display = 'block';
+
+                // **CRITICAL STEP FOR BACKEND**: 
+                // Replace the original file input data with the new cropped file
+                // So when you click "Submit", your Node/Express backend gets the CROP image, not the original.
+                const croppedFile = new File([blob], "product_image.jpg", { type: "image/jpeg" });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(croppedFile);
+                fileInput.files = dataTransfer.files;
+
+                modal.style.display = 'none'; // Hide modal
+            }, 'image/jpeg');
+        });
+
+        // 5. Cancel Cropping
+        cancelCropBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            fileInput.value = ''; // Reset file input
+        });
+    </script>
+
+
+    </body>
+</html>
+

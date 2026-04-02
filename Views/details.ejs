@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title><%= Products ? Products.productname : 'Product Not Found' %> | IGEC Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/details.css">
+</head>
+<body>
+
+    <%- include('nav', { activePage: 'home' }) %>
+
+    <div class="header-nav">
+        <a href="/" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back to Products
+        </a>
+    </div>
+
+    <% if(Products){ %>
+    <div class="product-details-card">
+        <div class="product-grid">
+            
+            <div class="product-image-wrapper">
+                <img src="<%= Products.imagepath %>" alt="<%= Products.productname %>" onerror="this.src='https://via.placeholder.com/400x400?text=No+Image'">
+            </div>
+
+            <div class="product-info-wrapper">
+                
+                <h1 class="product-title"><%= Products.productname %></h1>
+                
+                <h2 class="product-price">
+                    ₹<%= Products.price %>
+                    <span><i class="fa-solid fa-tag"></i> Best Price</span>
+                </h2>
+
+                <div class="description-box">
+                    <h4>Description</h4>
+                    <p><%= Products.description || 'No description provided by the seller. Feel free to message them for more details.' %></p>
+                </div>
+
+                <div class="seller-card">
+                    <% if(userData.gender && userData.gender.toLowerCase() === "male") { %>
+                        <img src="/male.png" alt="Male" class="avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                    <% } else if(userData.gender && userData.gender.toLowerCase() === "female") { %>
+                        <img src="/female.png" alt="Female" class="avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                    <% } else { %>
+                        <img src="/images/default.png" alt="User" class="avatar" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png'">
+                    <% } %>
+                    
+                    <div class="seller-details">
+                        <span>Listed By</span>
+                        <p><i class="fa-solid fa-circle-user"></i> <%= userData.username %></p>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <% if(userData._id.toString() !== userId.toString()){ %>
+                        
+                        <form action="/chatting" method="POST">
+                            <input type="hidden" value="<%= userData._id %>" name="clientId">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-bag-shopping"></i> Buy Now
+                            </button>
+                        </form>
+
+                        <form action="/favourites/<%= Products._id %>" method="POST">
+                            <button type="submit" class="btn btn-outline">
+                                <i class="fa-solid fa-heart"></i> Add To Favourites
+                            </button>
+                        </form>
+
+                    <% } else { %> 
+                        <a href="/yours" class="btn btn-owner">
+                            <i class="fa-solid fa-box-open"></i> This Is Your Product
+                        </a>
+                    <% } %>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <% } else { %>
+        <div class="error-state">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--danger-red); margin-bottom: 15px;"></i>
+            <h1>Product Does Not Exist</h1>
+            <p style="color: var(--text-muted); margin-top: 10px;">The product you are looking for might have been removed or sold out.</p>
+        </div>
+    <% } %>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - IGEC Marketplace</title>
+    <style>
+        /* Base Creamy & Greenish Theme Colors */
+        :root {
+            --bg-creamy: #fdfbf7;      
+            --container-bg: #ffffff;   
+            --green-primary: #66bb6a;  
+            --green-hover: #4caf50;    
+            --text-dark: #2c4c3b;      
+            --border-light: #c8e6c9;   
+        }
+
+        /* Global Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-creamy);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Card Container Styling */
+        .container {
+            max-width: 400px; /* Slightly narrower than signup page for a better login look */
+            margin: 50px auto;
+            padding: 30px 40px;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(102, 187, 106, 0.15);
+        }
+
+        /* Headings */
+        h1 {
+            text-align: center;
+            color: #388e3c;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        h2 {
+            text-align: center;
+            color: #607d8b;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+
+        /* Form & Inputs */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #4a6a57;
+            margin-bottom: -8px;
+        }
+
+        input {
+            padding: 12px 15px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #fbfdfb;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: #a5d6a7;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--green-primary);
+            box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.2);
+            background-color: #ffffff;
+        }
+
+        /* Button Styling */
+        button[type="submit"] {
+            margin-top: 15px;
+            padding: 14px;
+            background-color: var(--green-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--green-hover);
+        }
+
+        button[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        /* Extra Space for Bottom Navbar */
+        .space {
+            color: transparent; 
+            height: 20px;
+        }
+         .login-footer {
+            margin-top: 25px;
+            font-size: 16px;
+            color: #181717;
+        }
+
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            color: blue;
+        }
+
+        /* ========================================== */
+        /* MOBILE RESPONSIVENESS & BOTTOM NAVBAR FIX  */
+        /* ========================================== */
+        @media (max-width: 768px) {
+            .container {
+                margin: 30px auto;
+                width: 85%;
+                padding: 25px 20px;
+                /* Bottom margin so content doesn't hide behind mobile navbar */
+                margin-bottom: 120px; 
+            }
+            
+            .space {
+                height: 80px; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <%- include('nav', { activePage: 'account'}) %>
+
+        <h1>IGEC Marketplace</h1>
+        
+        <form action="/login" method="POST">
+            <h2>Login to Your Account</h2>
+
+            <%- include('errors') %>
+
+            <label>Email</label>
+            <input type="email" name="email" placeholder="example00@gmail.com" required>
+
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter Your Password" required>
+
+            <button type="submit">Login</button>
+        </form>
+          <div class="login-footer">
+            Don't have an account? <a href="/signup">Sign Up</a>
+        </div>
+
+        <div class="space">.</div>
+    </div>
+
+</body>
+</html>

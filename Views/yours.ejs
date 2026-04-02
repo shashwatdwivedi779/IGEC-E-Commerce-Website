@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title><%= Head %> | IGEC Shop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/yours.css">
+</head>
+<body>
+
+    <%- include('nav', { activePage: 'account'}) %>
+    
+    <div class="page-wrapper">
+        
+        <div class="top-header">
+            <a href="/account" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Settings
+            </a>
+            <h1 class="page-title">Your <span><%= Head %></span> Products</h1>
+        </div>
+
+        <div class="card-container">
+            <% if(Product && Product.length > 0) { %>
+                <% Product.forEach(product => { %>
+                    <div class="card">
+                        <img src="<%= product.imagepath %>" alt="<%= product.productname %>" onerror="this.src='https://via.placeholder.com/400x300?text=No+Image'">
+                        
+                        <div class="card-body">
+                            <h3><%= product.productname %></h3>
+                            <h4>₹<%= product.price %></h4>
+                            
+                            <div class="action-group">
+                                <a href="/details/<%= product._id %>" class="btn btn-primary">
+                                    <i class="fa-regular fa-eye"></i> Details
+                                </a>
+
+                                <% if(!favourite){ %>
+                                    <form action="/delete/<%= product._id %>" method="POST">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fa-solid fa-trash-can"></i> Delete
+                                        </button> 
+                                    </form>
+
+                                    <form action="/delete/<%= product._id %>" method="POST">
+                                        <button type="submit" class="btn btn-warning">
+                                            <i class="fa-solid fa-ban"></i> Out Of Stock
+                                        </button>
+                                    </form>
+
+                                <% } else { %>
+                                    <form action="/favourite/<%= product._id %>" method="POST">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fa-solid fa-heart-crack"></i> Remove
+                                        </button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fa-solid fa-box-open"></i>
+                    <h2>Nothing Here Yet!</h2>
+                    <p>No products available right now. Check back later or add your first <%= Head %> product.</p>
+                </div>
+            <% } %>
+        </div>
+
+    </div>
+    <div class="space">.</div>
+
+</body>
+</html>
