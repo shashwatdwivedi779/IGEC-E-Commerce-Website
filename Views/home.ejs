@@ -7,6 +7,7 @@
     <meta name="description" content="Exclusive marketplace for Indira Gandhi Engineering College students">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/home.css">
+
 </head>
 <body>
  <%- include('nav', { activePage: 'home' }) %>
@@ -24,6 +25,16 @@
 </div>
 
    
+    <form action="/search" method="POST" class="search-form">
+            <input
+                type="text"
+                name="q"
+                placeholder="Search products..."
+            >
+            <button type="submit">Search</button>
+        </form>
+
+
 
     <main>
         <div class="card-container">
