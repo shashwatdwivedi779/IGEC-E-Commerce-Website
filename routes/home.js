@@ -3,7 +3,12 @@ const home = express.Router();
 const LoginController = require('../controller/login');
 const HomeController = require('../controller/home');
 const ProfileController = require('../controller/account');
+
+const SearchController = require('../controller/search');
+
 const uploadd = require('../multer/multer');
+
+
 
 home.get('/', HomeController.GetHome);
 home.get('/signup', LoginController.GetSignup);
@@ -30,6 +35,7 @@ home.post('/delete/:id', ProfileController.PostDelete);
 home.get('/bugs', ProfileController.GetBugs);
 home.post('/bugs', ProfileController.PostBugs);
 home.post('/logout', ProfileController.PostLogout);
+home.post('/search', SearchController.SearchProducts);
 
 
 
