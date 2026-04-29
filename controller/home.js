@@ -40,14 +40,21 @@ exports.PostSell = async (req, res) => {
 exports.GetDetails = async (req, res) => {
     const id = req.params.id;
     const userId = req.userId;
+
+    const Productss = await Products.find({
+  _id: { $ne: id }
+});
+
     const ProductData = await Products.findById(id);
     const userData = await Users.findOne({ yourproducts: id });
-    res.render('details', { Products: ProductData, userData, userId });
+    res.render('details', { Products: ProductData, userData, userId, Productss });
 }
 
 exports.PostDetails = async (req, res) => {
     const clientId = req.body.clientId;
     const selfId = req.userId;
+    const id = req.params.id;
+    const product = await Products.findById(id);
 
     const seller = await Users.findById(clientId);
     const selfdata = await Users.findById(selfId);
@@ -62,7 +69,17 @@ exports.PostDetails = async (req, res) => {
         if(!selfdata.owner.includes(clientId)){
             selfdata.owner.push(clientId);
             await selfdata.save();
-        }}
+        }
+        const dMessage = new messages ({
+                Sender: selfdata,
+                Receiver: seller,
+                text: `I want to buy your "${product.productname}" product`
+            })
+             await dMessage.save();
+    
+    }
+
+           
    
     res.redirect(`/chatting_box/${clientId}`);;
 }
@@ -83,7 +100,7 @@ exports.GetChatSelection = async (req, res) => {
     }
 };
 
-// ================= GET CLIENT CHATS =================
+
 exports.GetClients = async (req, res) => {
     try {
         const user = await Users.findById(req.userId).populate('clients');
@@ -116,7 +133,8 @@ exports.GetClients = async (req, res) => {
     }
 };
 
-// ================= GET OWNER CHATS =================
+
+
 exports.GetOwner = async (req, res) => {
     try {
         const user = await Users.findById(req.userId).populate('owner');
