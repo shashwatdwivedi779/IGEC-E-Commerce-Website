@@ -19,6 +19,7 @@
         </a>
     </div>
 
+    <main>
     <% if(Products){ %>
     <div class="product-details-card">
         <div class="product-grid">
@@ -59,7 +60,7 @@
                 <div class="action-buttons">
                     <% if(userData._id.toString() !== userId.toString()){ %>
                         
-                        <form action="/chatting" method="POST">
+                        <form action="/chatting/<%= Products._id %>" method="POST">
                             <input type="hidden" value="<%= userData._id %>" name="clientId">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fa-solid fa-bag-shopping"></i> Buy Now
@@ -82,6 +83,32 @@
             </div>
         </div>
     </div>
+
+</main>
+
+<h4 class="here-are"> Here Are More Products </h4>
+<main>
+        <div class="card-container">
+            <% if (Productss && Productss.length > 0) { %>
+                <% Productss.forEach(product => { %>
+                    <div class="card">
+                        <img src="<%= product.imagepath || '/images/default-product.png' %>" alt="<%= product.productname %>">
+                        <h3><%= product.productname %></h3>
+                        <h4>₹<%= product.price || 0 %></h4>
+                        <a href="/details/<%= product._id %>" class="buy-btn">View Details</a>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p style="grid-column: 1/-1; text-align: center; color: #888;">
+                    No products available yet. Be the first to sell!
+                </p>
+            <% } %>
+        </div>
+    </main>
+
+
+
+
     <% } else { %>
         <div class="error-state">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--danger-red); margin-bottom: 15px;"></i>
@@ -90,5 +117,7 @@
         </div>
     <% } %>
 
+
+    <%- include('futter') %>
 </body>
 </html>
